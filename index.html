@@ -1,92 +1,728 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BUGATTI — The Art of Speed</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bugatti | The Art of Automotive Excellence</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Animated background particles -->
-  <div class="particles" id="particles"></div>
+    <!-- WebGL Canvas for 3D Background -->
+    <canvas id="webgl-canvas"></canvas>
+    
+    <!-- Particle System Overlay -->
+    <div id="particles"></div>
 
-  <!-- Navigation -->
-  <nav class="nav">
-    <div class="logo">BUGATTI</div>
-    <ul class="nav-links">
-      <li><a href="#hero">Home</a></li>
-      <li><a href="#models">Models</a></li>
-      <li><a href="#performance">Performance</a></li>
-      <li><a href="#legacy">Legacy</a></li>
-    </ul>
-  </nav>
-
-  <!-- Hero -->
-  <header class="hero" id="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-      <h1 class="hero-title">CHIRON</h1>
-      <p class="hero-subtitle">The pursuit of perfection in motion</p>
-      <a href="#performance" class="btn-pulse">Experience the Power</a>
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="speedometer-loader">
+            <svg viewBox="0 0 200 200" class="speedo-svg">
+                <defs>
+                    <linearGradient id="speedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#1a1a2e"/>
+                        <stop offset="50%" style="stop-color:#c9a227"/>
+                        <stop offset="100%" style="stop-color:#ff6b35"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="90" class="speedo-bg"/>
+                <circle cx="100" cy="100" r="90" class="speedo-progress"/>
+                <text x="100" y="105" class="speedo-text">0</text>
+                <text x="100" y="125" class="speedo-unit">km/h</text>
+            </svg>
+            <div class="loader-text">INITIALIZING</div>
+        </div>
     </div>
-    <div class="scroll-indicator"><span></span></div>
-  </header>
 
-  <!-- Models -->
-  <section class="section" id="models">
-    <h2 class="section-title reveal">Our Hypercars</h2>
-    <div class="cards">
-      <article class="card reveal">
-        <div class="card-shine"></div>
-        <h3>Chiron Super Sport</h3>
-        <p>1,578 hp of relentless French engineering.</p>
-      </article>
-      <article class="card reveal">
-        <div class="card-shine"></div>
-        <h3>Bolide</h3>
-        <p>The ultimate track-focused experiment.</p>
-      </article>
-      <article class="card reveal">
-        <div class="card-shine"></div>
-        <h3>Mistral W16</h3>
-        <p>The final roadster powered by the legendary W16.</p>
-      </article>
-    </div>
-  </section>
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <svg viewBox="0 0 100 60" class="bugatti-logo">
+                    <ellipse cx="50" cy="30" rx="48" ry="28" fill="none" stroke="#c9a227" stroke-width="2"/>
+                    <text x="50" y="38" text-anchor="middle" fill="#c9a227" font-family="Orbitron" font-size="14" font-weight="700">BUGATTI</text>
+                </svg>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#models" class="nav-link">Models</a></li>
+                <li><a href="#heritage" class="nav-link">Heritage</a></li>
+                <li><a href="#technology" class="nav-link">Technology</a></li>
+                <li><a href="#configure" class="nav-link">Configure</a></li>
+            </ul>
+            <div class="nav-speedo">
+                <div class="mini-speedo">
+                    <span class="speed-value">0</span>
+                    <span class="speed-unit">SCROLL</span>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Performance / Live animated speedometer -->
-  <section class="section performance" id="performance">
-    <h2 class="section-title reveal">Live Performance</h2>
-    <div class="speedo">
-      <svg viewBox="0 0 200 200" class="gauge">
-        <circle cx="100" cy="100" r="90" class="gauge-track" />
-        <circle cx="100" cy="100" r="90" class="gauge-fill" id="gaugeFill" />
-      </svg>
-      <div class="speed-readout">
-        <span class="speed-num" id="speedNum">0</span>
-        <span class="speed-unit">km/h</span>
-      </div>
-    </div>
-    <div class="stats">
-      <div class="stat reveal"><span class="stat-num" data-target="1578">0</span><span class="stat-label">Horsepower</span></div>
-      <div class="stat reveal"><span class="stat-num" data-target="490">0</span><span class="stat-label">Top Speed km/h</span></div>
-      <div class="stat reveal"><span class="stat-num" data-target="2">0</span><span class="stat-label">0-100 in sec</span></div>
-    </div>
-  </section>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="glitch" data-text="CHIRON">
+                    <span class="hero-subtitle">THE NEW</span>
+                    CHIRON
+                    <span class="hero-edition">SUPER SPORT</span>
+                </h1>
+                <p class="hero-description">Where engineering meets artistry. 1,600 horsepower of pure automotive perfection.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-gauge">
+                            <svg viewBox="0 0 100 50">
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#333" stroke-width="8"/>
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="url(#speedGradient)" stroke-width="8" class="stat-fill" data-value="1600"/>
+                            </svg>
+                        </div>
+                        <span class="stat-value">1,600</span>
+                        <span class="stat-label">HORSEPOWER</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-gauge">
+                            <svg viewBox="0 0 100 50">
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#333" stroke-width="8"/>
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="url(#speedGradient)" stroke-width="8" class="stat-fill" data-value="2.4"/>
+                            </svg>
+                        </div>
+                        <span class="stat-value">2.4</span>
+                        <span class="stat-label">0-100 KM/H (SEC)</span>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-gauge">
+                            <svg viewBox="0 0 100 50">
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#333" stroke-width="8"/>
+                                <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="url(#speedGradient)" stroke-width="8" class="stat-fill" data-value="440"/>
+                            </svg>
+                        </div>
+                        <span class="stat-value">440</span>
+                        <span class="stat-label">TOP SPEED (KM/H)</span>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <button class="btn-primary">
+                        <span>EXPLORE</span>
+                        <div class="btn-glow"></div>
+                    </button>
+                    <button class="btn-secondary">
+                        <span>CONFIGURE YOURS</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="hero-car">
+            <img src="https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=1920&q=90" alt="Bugatti Chiron" class="car-main">
+            <div class="car-reflection"></div>
+            <div class="car-shadow"></div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-wheel"></div>
+            <span>SCROLL TO EXPLORE</span>
+        </div>
+    </section>
 
-  <!-- Legacy -->
-  <section class="section legacy" id="legacy">
-    <h2 class="section-title reveal">A Century of Excellence</h2>
-    <p class="legacy-text reveal">Since 1909, Bugatti has merged art and performance into machines that defy imagination.</p>
-  </section>
+    <!-- Models Section -->
+    <section id="models" class="models-section">
+        <div class="section-header">
+            <h2 class="section-title">THE COLLECTION</h2>
+            <div class="title-line"></div>
+        </div>
+        
+        <div class="models-showcase">
+            <!-- Model Card 1 - Chiron -->
+            <div class="model-card" data-model="chiron">
+                <div class="card-3d-wrapper">
+                    <div class="card-inner">
+                        <div class="card-image">
+                            <img src="https://images.unsplash.com/photo-1566473965997-3de9c817e938?w=800&q=90" alt="Bugatti Chiron">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="card-content">
+                            <h3>CHIRON</h3>
+                            <p class="card-tagline">The Ultimate Grand Tourer</p>
+                            <div class="card-specs">
+                                <div class="spec">
+                                    <span class="spec-icon">⚡</span>
+                                    <span class="spec-value">1,500 HP</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🏎️</span>
+                                    <span class="spec-value">420 km/h</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">⏱️</span>
+                                    <span class="spec-value">2.4s</span>
+                                </div>
+                            </div>
+                            <div class="card-price">FROM €2,900,000</div>
+                        </div>
+                        <div class="card-speedometer">
+                            <svg viewBox="0 0 120 60" class="mini-gauge">
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#222" stroke-width="6"/>
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#c9a227" stroke-width="6" class="gauge-fill"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <footer class="footer">
+            <!-- Model Card 2 - Chiron Super Sport -->
+            <div class="model-card featured" data-model="chiron-ss">
+                <div class="card-3d-wrapper">
+                    <div class="card-inner">
+                        <div class="card-badge">FLAGSHIP</div>
+                        <div class="card-image">
+                            <img src="https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=800&q=90" alt="Bugatti Chiron Super Sport">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="card-content">
+                            <h3>CHIRON SUPER SPORT</h3>
+                            <p class="card-tagline">Breaking the 300mph Barrier</p>
+                            <div class="card-specs">
+                                <div class="spec">
+                                    <span class="spec-icon">⚡</span>
+                                    <span class="spec-value">1,600 HP</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🏎️</span>
+                                    <span class="spec-value">440 km/h</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">⏱️</span>
+                                    <span class="spec-value">2.3s</span>
+                                </div>
+                            </div>
+                            <div class="card-price">FROM €3,500,000</div>
+                        </div>
+                        <div class="card-speedometer">
+                            <svg viewBox="0 0 120 60" class="mini-gauge">
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#222" stroke-width="6"/>
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#c9a227" stroke-width="6" class="gauge-fill"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <p>BUGATTI — Demo site for animations. Not affiliated with Bugatti Automobiles S.A.S.</p>
-  </footer>
+            <!-- Model Card 3 - Bolide -->
+            <div class="model-card" data-model="bolide">
+                <div class="card-3d-wrapper">
+                    <div class="card-inner">
+                        <div class="card-badge">TRACK ONLY</div>
+                        <div class="card-image">
+                            <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=90" alt="Bugatti Bolide">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="card-content">
+                            <h3>BOLIDE</h3>
+                            <p class="card-tagline">Pure Racing DNA</p>
+                            <div class="card-specs">
+                                <div class="spec">
+                                    <span class="spec-icon">⚡</span>
+                                    <span class="spec-value">1,850 HP</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🏎️</span>
+                                    <span class="spec-value">500+ km/h</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">⚖️</span>
+                                    <span class="spec-value">1,240 kg</span>
+                                </div>
+                            </div>
+                            <div class="card-price">FROM €4,000,000</div>
+                        </div>
+                        <div class="card-speedometer">
+                            <svg viewBox="0 0 120 60" class="mini-gauge">
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#222" stroke-width="6"/>
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#c9a227" stroke-width="6" class="gauge-fill"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <script src="script.js"></script>
+            <!-- Model Card 4 - Mistral -->
+            <div class="model-card" data-model="mistral">
+                <div class="card-3d-wrapper">
+                    <div class="card-inner">
+                        <div class="card-badge">ROADSTER</div>
+                        <div class="card-image">
+                            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=90" alt="Bugatti Mistral">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="card-content">
+                            <h3>MISTRAL</h3>
+                            <p class="card-tagline">Open-Top Perfection</p>
+                            <div class="card-specs">
+                                <div class="spec">
+                                    <span class="spec-icon">⚡</span>
+                                    <span class="spec-value">1,600 HP</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🏎️</span>
+                                    <span class="spec-value">420 km/h</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-icon">🔢</span>
+                                    <span class="spec-value">99 Units</span>
+                                </div>
+                            </div>
+                            <div class="card-price">FROM €5,000,000</div>
+                        </div>
+                        <div class="card-speedometer">
+                            <svg viewBox="0 0 120 60" class="mini-gauge">
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#222" stroke-width="6"/>
+                                <path d="M10,55 A50,50 0 0,1 110,55" fill="none" stroke="#c9a227" stroke-width="6" class="gauge-fill"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Heritage Section -->
+    <section id="heritage" class="heritage-section">
+        <div class="heritage-bg">
+            <div class="heritage-overlay"></div>
+        </div>
+        <div class="heritage-content">
+            <div class="section-header">
+                <h2 class="section-title">HERITAGE</h2>
+                <div class="title-line"></div>
+                <p class="section-subtitle">A Legacy of Excellence Since 1909</p>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item" data-year="1909">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">1909</span>
+                        <h3>The Beginning</h3>
+                        <p>Ettore Bugatti founds the company in Molsheim, Alsace, beginning a legacy of automotive excellence.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-year="1924">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">1924</span>
+                        <h3>Type 35</h3>
+                        <p>The legendary Type 35 debuts, becoming the most successful racing car in history with over 2,000 victories.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-year="1936">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">1936</span>
+                        <h3>Type 57SC Atlantic</h3>
+                        <p>The iconic Atlantic is born, now considered one of the most valuable cars ever made.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-year="2005">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">2005</span>
+                        <h3>Veyron Era</h3>
+                        <p>The Veyron 16.4 launches, becoming the world's fastest production car at 407 km/h.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" data-year="2016">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">2016</span>
+                        <h3>Chiron Arrives</h3>
+                        <p>The Chiron succeeds the Veyron, pushing boundaries with 1,500 HP and revolutionary engineering.</p>
+                    </div>
+                </div>
+                <div class="timeline-item active" data-year="2024">
+                    <div class="timeline-marker">
+                        <div class="marker-pulse"></div>
+                    </div>
+                    <div class="timeline-content">
+                        <span class="year">2024</span>
+                        <h3>The Future</h3>
+                        <p>Bugatti continues to redefine automotive excellence, blending heritage with cutting-edge innovation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="technology-section">
+        <div class="section-header">
+            <h2 class="section-title">ENGINEERING MARVEL</h2>
+            <div class="title-line"></div>
+        </div>
+
+        <div class="tech-showcase">
+            <div class="tech-visual">
+                <div class="engine-display">
+                    <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=90" alt="Bugatti Engine" class="engine-img">
+                    <div class="hotspots">
+                        <div class="hotspot" data-info="w16" style="top: 30%; left: 50%;">
+                            <div class="hotspot-pulse"></div>
+                            <div class="hotspot-tooltip">
+                                <h4>W16 Engine</h4>
+                                <p>8.0L quad-turbocharged masterpiece</p>
+                            </div>
+                        </div>
+                        <div class="hotspot" data-info="turbo" style="top: 45%; left: 25%;">
+                            <div class="hotspot-pulse"></div>
+                            <div class="hotspot-tooltip">
+                                <h4>Quad Turbochargers</h4>
+                                <p>Sequential boost for instant response</p>
+                            </div>
+                        </div>
+                        <div class="hotspot" data-info="cooling" style="top: 60%; left: 70%;">
+                            <div class="hotspot-pulse"></div>
+                            <div class="hotspot-tooltip">
+                                <h4>Cooling System</h4>
+                                <p>10 radiators managing extreme heat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-specs">
+                <div class="spec-panel">
+                    <div class="panel-header">
+                        <div class="panel-icon">
+                            <svg viewBox="0 0 50 50">
+                                <circle cx="25" cy="25" r="20" fill="none" stroke="#c9a227" stroke-width="2"/>
+                                <path d="M25,10 L25,25 L35,30" fill="none" stroke="#c9a227" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>W16 POWERPLANT</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="spec-row">
+                            <span class="spec-label">Displacement</span>
+                            <span class="spec-data">7,993 cc</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Configuration</span>
+                            <span class="spec-data">W16 Quad-Turbo</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Max Power</span>
+                            <span class="spec-data">1,600 PS @ 7,100 rpm</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Max Torque</span>
+                            <span class="spec-data">1,600 Nm @ 2,250 rpm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spec-panel">
+                    <div class="panel-header">
+                        <div class="panel-icon">
+                            <svg viewBox="0 0 50 50">
+                                <rect x="10" y="20" width="30" height="15" fill="none" stroke="#c9a227" stroke-width="2"/>
+                                <line x1="15" y1="25" x2="15" y2="30" stroke="#c9a227" stroke-width="2"/>
+                                <line x1="25" y1="25" x2="25" y2="30" stroke="#c9a227" stroke-width="2"/>
+                                <line x1="35" y1="25" x2="35" y2="30" stroke="#c9a227" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>TRANSMISSION</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="spec-row">
+                            <span class="spec-label">Type</span>
+                            <span class="spec-data">7-Speed DSG</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Drive</span>
+                            <span class="spec-data">All-Wheel Drive</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Shift Time</span>
+                            <span class="spec-data">< 100ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spec-panel">
+                    <div class="panel-header">
+                        <div class="panel-icon">
+                            <svg viewBox="0 0 50 50">
+                                <polygon points="25,5 45,40 5,40" fill="none" stroke="#c9a227" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>AERODYNAMICS</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="spec-row">
+                            <span class="spec-label">Drag Coefficient</span>
+                            <span class="spec-data">0.35 Cd</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Downforce</span>
+                            <span class="spec-data">500 kg @ 380 km/h</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Active Aero</span>
+                            <span class="spec-data">Adaptive Wing System</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Speedometer Dashboard -->
+        <div class="dashboard-section">
+            <h3 class="dashboard-title">PERFORMANCE DASHBOARD</h3>
+            <div class="dashboard-container">
+                <div class="main-speedometer">
+                    <svg viewBox="0 0 300 200" class="speedo-main">
+                        <defs>
+                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#1a1a2e"/>
+                                <stop offset="30%" style="stop-color:#c9a227"/>
+                                <stop offset="70%" style="stop-color:#ff6b35"/>
+                                <stop offset="100%" style="stop-color:#ff0000"/>
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Outer ring -->
+                        <circle cx="150" cy="150" r="140" fill="none" stroke="#1a1a1a" stroke-width="20"/>
+                        <!-- Speed arc background -->
+                        <path d="M30,150 A120,120 0 0,1 270,150" fill="none" stroke="#222" stroke-width="15" stroke-linecap="round"/>
+                        <!-- Speed arc fill -->
+                        <path d="M30,150 A120,120 0 0,1 270,150" fill="none" stroke="url(#gaugeGradient)" stroke-width="15" stroke-linecap="round" class="speed-arc" filter="url(#glow)"/>
+                        <!-- Tick marks -->
+                        <g class="tick-marks">
+                            <line x1="150" y1="35" x2="150" y2="50" stroke="#c9a227" stroke-width="2"/>
+                            <line x1="70" y1="70" x2="80" y2="80" stroke="#c9a227" stroke-width="2"/>
+                            <line x1="35" y1="150" x2="50" y2="150" stroke="#c9a227" stroke-width="2"/>
+                            <line x1="230" y1="70" x2="220" y2="80" stroke="#c9a227" stroke-width="2"/>
+                            <line x1="265" y1="150" x2="250" y2="150" stroke="#c9a227" stroke-width="2"/>
+                        </g>
+                        <!-- Speed labels -->
+                        <text x="45" y="170" fill="#666" font-size="12">0</text>
+                        <text x="70" y="90" fill="#666" font-size="12">100</text>
+                        <text x="140" y="55" fill="#666" font-size="12">200</text>
+                        <text x="215" y="90" fill="#666" font-size="12">300</text>
+                        <text x="245" y="170" fill="#666" font-size="12">440</text>
+                        <!-- Needle -->
+                        <g class="needle-group" transform="rotate(-90, 150, 150)">
+                            <polygon points="150,40 145,150 150,160 155,150" fill="#ff0000" filter="url(#glow)"/>
+                            <circle cx="150" cy="150" r="15" fill="#1a1a1a" stroke="#c9a227" stroke-width="2"/>
+                        </g>
+                        <!-- Digital display -->
+                        <rect x="100" y="100" width="100" height="40" fill="#0a0a0a" rx="5"/>
+                        <text x="150" y="128" text-anchor="middle" fill="#c9a227" font-family="Orbitron" font-size="24" class="digital-speed">0</text>
+                        <text x="150" y="145" text-anchor="middle" fill="#666" font-family="Rajdhani" font-size="10">KM/H</text>
+                    </svg>
+                </div>
+
+                <div class="secondary-gauges">
+                    <div class="gauge-item">
+                        <svg viewBox="0 0 100 100" class="mini-gauge-svg">
+                            <circle cx="50" cy="50" r="45" fill="#0a0a0a" stroke="#222" stroke-width="3"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#c9a227" stroke-width="6" stroke-linecap="round" class="rpm-arc"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#c9a227" font-family="Orbitron" font-size="14" class="rpm-value">0</text>
+                            <text x="50" y="70" text-anchor="middle" fill="#666" font-family="Rajdhani" font-size="8">RPM x1000</text>
+                        </svg>
+                        <span class="gauge-label">ENGINE</span>
+                    </div>
+                    <div class="gauge-item">
+                        <svg viewBox="0 0 100 100" class="mini-gauge-svg">
+                            <circle cx="50" cy="50" r="45" fill="#0a0a0a" stroke="#222" stroke-width="3"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#00ff88" stroke-width="6" stroke-linecap="round" class="boost-arc"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#00ff88" font-family="Orbitron" font-size="14" class="boost-value">0.0</text>
+                            <text x="50" y="70" text-anchor="middle" fill="#666" font-family="Rajdhani" font-size="8">BAR</text>
+                        </svg>
+                        <span class="gauge-label">BOOST</span>
+                    </div>
+                    <div class="gauge-item">
+                        <svg viewBox="0 0 100 100" class="mini-gauge-svg">
+                            <circle cx="50" cy="50" r="45" fill="#0a0a0a" stroke="#222" stroke-width="3"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M15,50 A35,35 0 0,1 85,50" fill="none" stroke="#ff6b35" stroke-width="6" stroke-linecap="round" class="temp-arc"/>
+                            <text x="50" y="55" text-anchor="middle" fill="#ff6b35" font-family="Orbitron" font-size="14" class="temp-value">90</text>
+                            <text x="50" y="70" text-anchor="middle" fill="#666" font-family="Rajdhani" font-size="8">°C</text>
+                        </svg>
+                        <span class="gauge-label">TEMP</span>
+                    </div>
+                    <div class="gauge-item">
+                        <svg viewBox="0 0 100 100" class="mini-gauge-svg">
+                            <circle cx="50" cy="50" r="45" fill="#0a0a0a" stroke="#222" stroke-width="3"/>
+                            <rect x="30" y="35" width="40" height="25" fill="#0a0a0a" stroke="#c9a227" stroke-width="1"/>
+                            <text x="50" y="53" text-anchor="middle" fill="#c9a227" font-family="Orbitron" font-size="16" class="gear-value">N</text>
+                            <text x="50" y="75" text-anchor="middle" fill="#666" font-family="Rajdhani" font-size="8">GEAR</text>
+                        </svg>
+                        <span class="gauge-label">TRANSMISSION</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configure Section -->
+    <section id="configure" class="configure-section">
+        <div class="section-header">
+            <h2 class="section-title">CONFIGURE YOUR BUGATTI</h2>
+            <div class="title-line"></div>
+        </div>
+
+        <div class="configurator">
+            <div class="config-preview">
+                <div class="car-360">
+                    <img src="https://images.unsplash.com/photo-1600712242805-5f78671b24da?w=1200&q=90" alt="Configure Bugatti" class="config-car-img">
+                    <div class="color-overlay"></div>
+                </div>
+                <div class="config-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Model</span>
+                        <span class="summary-value" id="selected-model">Chiron Super Sport</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Exterior</span>
+                        <span class="summary-value" id="selected-color">Atlantic Blue</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Interior</span>
+                        <span class="summary-value" id="selected-interior">Beluga Black</span>
+                    </div>
+                    <div class="summary-total">
+                        <span class="total-label">ESTIMATED PRICE</span>
+                        <span class="total-value" id="total-price">€3,750,000</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-options">
+                <div class="option-group">
+                    <h4>EXTERIOR COLOR</h4>
+                    <div class="color-options">
+                        <button class="color-btn active" data-color="atlantic-blue" style="background: linear-gradient(135deg, #1a3a5c, #2d5a87);" title="Atlantic Blue"></button>
+                        <button class="color-btn" data-color="french-racing" style="background: linear-gradient(135deg, #1e3a8a, #3b82f6);" title="French Racing Blue"></button>
+                        <button class="color-btn" data-color="jet-black" style="background: linear-gradient(135deg, #0a0a0a, #1a1a1a);" title="Jet Black"></button>
+                        <button class="color-btn" data-color="quartz-white" style="background: linear-gradient(135deg, #f5f5f5, #e0e0e0);" title="Quartz White"></button>
+                        <button class="color-btn" data-color="italian-red" style="background: linear-gradient(135deg, #8b0000, #dc143c);" title="Italian Red"></button>
+                        <button class="color-btn" data-color="nocturne" style="background: linear-gradient(135deg, #2d1b4e, #4a2c7a);" title="Nocturne"></button>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <h4>INTERIOR</h4>
+                    <div class="interior-options">
+                        <button class="interior-btn active" data-interior="beluga-black">
+                            <span class="swatch" style="background: #1a1a1a;"></span>
+                            <span>Beluga Black</span>
+                        </button>
+                        <button class="interior-btn" data-interior="cognac">
+                            <span class="swatch" style="background: #8b4513;"></span>
+                            <span>Cognac</span>
+                        </button>
+                        <button class="interior-btn" data-interior="gaucho">
+                            <span class="swatch" style="background: #d2691e;"></span>
+                            <span>Gaucho</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="option-group">
+                    <h4>WHEELS</h4>
+                    <div class="wheel-options">
+                        <button class="wheel-btn active" data-wheel="sport">
+                            <div class="wheel-preview">⚙️</div>
+                            <span>Sport</span>
+                        </button>
+                        <button class="wheel-btn" data-wheel="touring">
+                            <div class="wheel-preview">⚙️</div>
+                            <span>Touring</span>
+                        </button>
+                        <button class="wheel-btn" data-wheel="carbon">
+                            <div class="wheel-preview">⚙️</div>
+                            <span>Carbon</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-configure">
+                    <span>REQUEST CONSULTATION</span>
+                    <div class="btn-shine"></div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <svg viewBox="0 0 100 60" class="footer-logo">
+                    <ellipse cx="50" cy="30" rx="48" ry="28" fill="none" stroke="#c9a227" stroke-width="2"/>
+                    <text x="50" y="38" text-anchor="middle" fill="#c9a227" font-family="Orbitron" font-size="14" font-weight="700">BUGATTI</text>
+                </svg>
+                <p class="footer-tagline">"If comparable, it is no longer Bugatti."</p>
+                <p class="footer-founder">- Ettore Bugatti</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-group">
+                    <h5>MODELS</h5>
+                    <a href="#">Chiron</a>
+                    <a href="#">Chiron Super Sport</a>
+                    <a href="#">Bolide</a>
+                    <a href="#">Mistral</a>
+                </div>
+                <div class="link-group">
+                    <h5>EXPERIENCE</h5>
+                    <a href="#">Heritage</a>
+                    <a href="#">Technology</a>
+                    <a href="#">Lifestyle</a>
+                    <a href="#">Events</a>
+                </div>
+                <div class="link-group">
+                    <h5>OWNERSHIP</h5>
+                    <a href="#">Configure</a>
+                    <a href="#">Dealers</a>
+                    <a href="#">Service</a>
+                    <a href="#">Certified Pre-Owned</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-link">Instagram</a>
+                <a href="#" class="social-link">YouTube</a>
+                <a href="#" class="social-link">Facebook</a>
+                <a href="#" class="social-link">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Bugatti Automobiles S.A.S. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Cookie Settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
