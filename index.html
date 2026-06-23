@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUGATTI — The Art of Speed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="logo">BUGATTI</div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#models">Models</a></li>
+      <li><a href="#performance">Performance</a></li>
+      <li><a href="#legacy">Legacy</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">CHIRON</h1>
+      <p class="hero-subtitle">The pursuit of perfection in motion</p>
+      <a href="#performance" class="btn-pulse">Experience the Power</a>
+    </div>
+    <div class="scroll-indicator"><span></span></div>
+  </header>
+
+  <!-- Models -->
+  <section class="section" id="models">
+    <h2 class="section-title reveal">Our Hypercars</h2>
+    <div class="cards">
+      <article class="card reveal">
+        <div class="card-shine"></div>
+        <h3>Chiron Super Sport</h3>
+        <p>1,578 hp of relentless French engineering.</p>
+      </article>
+      <article class="card reveal">
+        <div class="card-shine"></div>
+        <h3>Bolide</h3>
+        <p>The ultimate track-focused experiment.</p>
+      </article>
+      <article class="card reveal">
+        <div class="card-shine"></div>
+        <h3>Mistral W16</h3>
+        <p>The final roadster powered by the legendary W16.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Performance / Live animated speedometer -->
+  <section class="section performance" id="performance">
+    <h2 class="section-title reveal">Live Performance</h2>
+    <div class="speedo">
+      <svg viewBox="0 0 200 200" class="gauge">
+        <circle cx="100" cy="100" r="90" class="gauge-track" />
+        <circle cx="100" cy="100" r="90" class="gauge-fill" id="gaugeFill" />
+      </svg>
+      <div class="speed-readout">
+        <span class="speed-num" id="speedNum">0</span>
+        <span class="speed-unit">km/h</span>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><span class="stat-num" data-target="1578">0</span><span class="stat-label">Horsepower</span></div>
+      <div class="stat reveal"><span class="stat-num" data-target="490">0</span><span class="stat-label">Top Speed km/h</span></div>
+      <div class="stat reveal"><span class="stat-num" data-target="2">0</span><span class="stat-label">0-100 in sec</span></div>
+    </div>
+  </section>
+
+  <!-- Legacy -->
+  <section class="section legacy" id="legacy">
+    <h2 class="section-title reveal">A Century of Excellence</h2>
+    <p class="legacy-text reveal">Since 1909, Bugatti has merged art and performance into machines that defy imagination.</p>
+  </section>
+
+  <footer class="footer">
+
+    <p>BUGATTI — Demo site for animations. Not affiliated with Bugatti Automobiles S.A.S.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
