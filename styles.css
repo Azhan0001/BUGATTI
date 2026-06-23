@@ -1,289 +1,720 @@
-:root {
-  --blue: #1a3aff;
-  --blue-glow: #3a6bff;
-  --dark: #05060a;
-  --light: #f5f7ff;
+// ============================================
+// BUGATTI WEBSITE - INTERACTIVE JAVASCRIPT
+// ============================================
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initLoader();
+    initParticles();
+    initWebGL();
+    initNavigation();
+    initScrollAnimations();
+    initSpeedometer();
+    initModelCards();
+    initTimeline();
+    initConfigurator();
+    initDashboard();
+});
+
+// ============================================
+// LOADING SCREEN
+// ============================================
+function initLoader() {
+    const loader = document.getElementById('loader');
+    const speedoText = document.querySelector('.speedo-text');
+    let speed = 0;
+    const targetSpeed = 440;
+    const duration = 2500;
+    const startTime = Date.now();
+
+    function updateSpeed() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth acceleration
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        speed = Math.round(targetSpeed * easeOutQuart);
+        
+        if (speedoText) {
+            speedoText.textContent = speed;
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(updateSpeed);
+        } else {
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                triggerEntryAnimations();
+            }, 500);
+        }
+    }
+
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(updateSpeed);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+function triggerEntryAnimations() {
+    // Animate hero elements
+    const heroElements = document.querySelectorAll('.hero-text > *, .hero-stats .stat-item');
+    heroElements.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            el.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, i * 100);
+    });
 
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: var(--dark);
-  color: var(--light);
-  overflow-x: hidden;
-}
-
-/* Floating particles */
-.particles {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.particle {
-  position: absolute;
-  width: 3px; height: 3px;
-  background: var(--blue-glow);
-  border-radius: 50%;
-  opacity: 0.4;
-  animation: float linear infinite;
-  box-shadow: 0 0 8px var(--blue-glow);
-}
-@keyframes float {
-  0% { transform: translateY(100vh) scale(0); opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    // Animate stat gauges
+    setTimeout(() => {
+        document.querySelectorAll('.stat-item').forEach(item => {
+            item.classList.add('animated');
+        });
+    }, 800);
 }
 
-/* Nav */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 3rem;
-  background: rgba(5,6,10,0.6);
-  backdrop-filter: blur(10px);
-  transition: padding 0.3s ease;
-}
-.logo {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 900;
-  letter-spacing: 6px;
-  font-size: 1.4rem;
-  color: var(--blue-glow);
-  text-shadow: 0 0 12px var(--blue);
-}
-.nav-links { list-style: none; display: flex; gap: 2rem; }
-.nav-links a {
-  color: var(--light);
-  text-decoration: none;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  position: relative;
-}
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: -6px;
-  width: 0; height: 2px;
-  background: var(--blue-glow);
-  transition: width 0.3s ease;
-}
-.nav-links a:hover::after { width: 100%; }
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+function initParticles() {
+    const container = document.getElementById('particles');
+    const particleCount = 50;
 
-/* Hero */
-.hero {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-}
-.hero-glow {
-  position: absolute;
-  width: 120vmax; height: 120vmax;
-  background: radial-gradient(circle, rgba(26,58,255,0.25) 0%, transparent 60%);
-  animation: pulseGlow 6s ease-in-out infinite;
-}
-@keyframes pulseGlow {
-  0%,100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.2); opacity: 1; }
-}
-.hero-content { position: relative; z-index: 2; }
-.hero-title {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 900;
-  font-size: clamp(3rem, 14vw, 11rem);
-  letter-spacing: 1.2rem;
-  background: linear-gradient(90deg, #fff, var(--blue-glow), #fff);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shimmer 4s linear infinite, riseIn 1.2s ease both;
-}
-@keyframes shimmer { to { background-position: 200% center; } }
-@keyframes riseIn {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.hero-subtitle {
-  margin-top: 1rem;
-  font-weight: 300;
-  letter-spacing: 3px;
-  opacity: 0;
-  animation: riseIn 1.2s ease 0.4s both;
-}
-.btn-pulse {
-  display: inline-block;
-  margin-top: 2.5rem;
-  padding: 0.9rem 2.5rem;
-  border: 1px solid var(--blue-glow);
-  border-radius: 40px;
-  color: var(--light);
-  text-decoration: none;
-  letter-spacing: 2px;
-  font-size: 0.85rem;
-  opacity: 0;
-  animation: riseIn 1.2s ease 0.8s both, pulseBtn 2.5s ease-in-out 2s infinite;
-}
-@keyframes pulseBtn {
-  0%,100% { box-shadow: 0 0 0 0 rgba(58,107,255,0.5); }
-  50% { box-shadow: 0 0 30px 6px rgba(58,107,255,0.4); }
-}
-.btn-pulse:hover { background: var(--blue); }
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 30px; left: 50%;
-  transform: translateX(-50%);
-  width: 26px; height: 44px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-radius: 14px;
-}
-.scroll-indicator span {
-  display: block;
-  width: 4px; height: 8px;
-  margin: 8px auto;
-  background: var(--blue-glow);
-  border-radius: 2px;
-  animation: scrollDot 1.6s ease-in-out infinite;
-}
-@keyframes scrollDot {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(16px); opacity: 0; }
+    for (let i = 0; i < particleCount; i++) {
+        createParticle(container);
+    }
 }
 
-/* Sections */
-.section {
-  position: relative;
-  z-index: 2;
-  padding: 7rem 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-.section-title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  text-align: center;
-  margin-bottom: 3rem;
-  letter-spacing: 4px;
-}
-
-/* Reveal on scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-/* Cards */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
-}
-.card {
-  position: relative;
-  padding: 2.5rem 2rem;
-  background: linear-gradient(145deg, #0b0f1f, #05060a);
-  border: 1px solid rgba(58,107,255,0.2);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-}
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 50px rgba(26,58,255,0.3);
-}
-.card h3 { font-family: 'Orbitron', sans-serif; color: var(--blue-glow); margin-bottom: 0.8rem; }
-.card p { font-weight: 300; opacity: 0.8; }
-.card-shine {
-  position: absolute;
-  top: 0; left: -60%;
-  width: 50%; height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.6s ease;
-}
-.card:hover .card-shine { left: 120%; }
-
-/* Speedometer */
-.performance { text-align: center; }
-.speedo {
-  position: relative;
-  width: 280px; height: 280px;
-  margin: 0 auto 3rem;
-}
-.gauge { transform: rotate(-90deg); width: 100%; height: 100%; }
-.gauge-track, .gauge-fill {
-  fill: none;
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-.gauge-track { stroke: rgba(255,255,255,0.08); }
-.gauge-fill {
-  stroke: var(--blue-glow);
-  stroke-dasharray: 565;
-  stroke-dashoffset: 565;
-  filter: drop-shadow(0 0 8px var(--blue));
-  transition: stroke-dashoffset 0.1s linear;
-}
-.speed-readout {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Orbitron', sans-serif;
-}
-.speed-num { font-size: 3.2rem; font-weight: 900; color: var(--light); }
-.speed-unit { display: block; font-size: 0.9rem; opacity: 0.6; letter-spacing: 3px; }
-
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 3rem;
-}
-.stat { display: flex; flex-direction: column; }
-.stat-num {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2.6rem;
-  color: var(--blue-glow);
-}
-.stat-label { font-size: 0.8rem; letter-spacing: 2px; opacity: 0.7; }
-
-/* Legacy */
-.legacy { text-align: center; }
-.legacy-text {
-  max-width: 600px;
-  margin: 0 auto;
-  font-weight: 300;
-  font-size: 1.2rem;
-  line-height: 1.8;
-  opacity: 0.85;
+function createParticle(container) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random position
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    
+    // Random size
+    const size = Math.random() * 3 + 1;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    
+    // Random animation delay and duration
+    particle.style.animationDelay = Math.random() * 15 + 's';
+    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    
+    container.appendChild(particle);
 }
 
-.footer {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.75rem;
-  opacity: 0.5;
-  border-top: 1px solid rgba(255,255,255,0.06);
+// ============================================
+// WEBGL 3D BACKGROUND
+// ============================================
+function initWebGL() {
+    const canvas = document.getElementById('webgl-canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    
+    if (!gl) {
+        console.log('WebGL not supported, falling back to CSS effects');
+        return;
+    }
+
+    // Set canvas size
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Vertex shader
+    const vertexShaderSource = `
+        attribute vec2 a_position;
+        void main() {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+        }
+    `;
+
+    // Fragment shader - creates dynamic gradient effect
+    const fragmentShaderSource = `
+        precision mediump float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        uniform vec2 u_mouse;
+        
+        void main() {
+            vec2 st = gl_FragCoord.xy / u_resolution;
+            
+            // Create dynamic gradient
+            float gradient = st.y * 0.3;
+            
+            // Add subtle wave effect
+            float wave = sin(st.x * 10.0 + u_time * 0.5) * 0.02;
+            wave += sin(st.y * 8.0 + u_time * 0.3) * 0.02;
+            
+            // Mouse interaction
+            float dist = distance(st, u_mouse);
+            float glow = smoothstep(0.5, 0.0, dist) * 0.1;
+            
+            // Gold accent color
+            vec3 gold = vec3(0.788, 0.635, 0.153);
+            vec3 black = vec3(0.039, 0.039, 0.039);
+            
+            vec3 color = mix(black, gold * 0.3, gradient + wave + glow);
+            
+            gl_FragColor = vec4(color, 1.0);
+        }
+    `;
+
+    // Compile shaders
+    function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    // Create program
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        return;
+    }
+
+    gl.useProgram(program);
+
+    // Create geometry (full-screen quad)
+    const positions = new Float32Array([
+        -1, -1,
+        1, -1,
+        -1, 1,
+        -1, 1,
+        1, -1,
+        1, 1
+    ]);
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // Get uniform locations
+    const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+    const timeLocation = gl.getUniformLocation(program, 'u_time');
+    const mouseLocation = gl.getUniformLocation(program, 'u_mouse');
+
+    // Mouse tracking
+    let mouseX = 0.5, mouseY = 0.5;
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX / window.innerWidth;
+        mouseY = 1 - (e.clientY / window.innerHeight);
+    });
+
+    // Animation loop
+    function render(time) {
+        time *= 0.001; // Convert to seconds
+
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+        gl.uniform1f(timeLocation, time);
+        gl.uniform2f(mouseLocation, mouseX, mouseY);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
 }
 
-@media (max-width: 600px) {
-  .nav { padding: 1rem 1.2rem; }
-  .nav-links { gap: 1rem; }
+// ============================================
+// NAVIGATION
+// ============================================
+function initNavigation() {
+    const nav = document.getElementById('main-nav');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const speedValue = document.querySelector('.speed-value');
+    let lastScrollY = 0;
+
+    // Scroll effects
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        
+        // Add scrolled class
+        if (scrollY > 100) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+
+        // Update scroll speed indicator
+        const scrollSpeed = Math.abs(scrollY - lastScrollY);
+        const displaySpeed = Math.min(Math.round(scrollSpeed * 2), 440);
+        if (speedValue) {
+            speedValue.textContent = displaySpeed;
+        }
+        lastScrollY = scrollY;
+
+        // Update active nav link based on scroll position
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 150) {
+                const id = section.getAttribute('id');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    });
+
+    // Smooth scroll for nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
 }
+
+// ============================================
+// SCROLL ANIMATIONS
+// ============================================
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                
+                // Trigger specific animations
+                if (entry.target.classList.contains('model-card')) {
+                    animateModelCard(entry.target);
+                }
+                if (entry.target.classList.contains('timeline-item')) {
+                    animateTimelineItem(entry.target);
+                }
+                if (entry.target.classList.contains('spec-panel')) {
+                    animateSpecPanel(entry.target);
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements
+    document.querySelectorAll('.model-card, .timeline-item, .spec-panel, .section-header').forEach(el => {
+        el.classList.add('reveal');
+        observer.observe(el);
+    });
+
+    // Parallax effect for hero car
+    const heroCar = document.querySelector('.hero-car');
+    if (heroCar) {
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const parallaxSpeed = 0.3;
+            heroCar.style.transform = `translateY(calc(-50% + ${scrollY * parallaxSpeed}px))`;
+        });
+    }
+}
+
+function animateModelCard(card) {
+    const gauge = card.querySelector('.gauge-fill');
+    if (gauge) {
+        setTimeout(() => {
+            gauge.style.strokeDashoffset = '0';
+        }, 300);
+    }
+}
+
+function animateTimelineItem(item) {
+    item.style.opacity = '1';
+}
+
+function animateSpecPanel(panel) {
+    panel.style.opacity = '1';
+    panel.style.transform = 'translateX(0)';
+}
+
+// ============================================
+// SPEEDOMETER INTERACTIONS
+// ============================================
+function initSpeedometer() {
+    // Hero stats animation on scroll
+    const statItems = document.querySelectorAll('.stat-item');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                animateStatValue(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    statItems.forEach(item => observer.observe(item));
+}
+
+function animateStatValue(statItem) {
+    const valueEl = statItem.querySelector('.stat-value');
+    if (!valueEl) return;
+
+    const targetValue = parseFloat(valueEl.textContent.replace(',', ''));
+    const duration = 2000;
+    const startTime = Date.now();
+    const startValue = 0;
+
+    function update() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = startValue + (targetValue - startValue) * easeOut;
+
+        if (targetValue >= 100) {
+            valueEl.textContent = Math.round(currentValue).toLocaleString();
+        } else {
+            valueEl.textContent = currentValue.toFixed(1);
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+// ============================================
+// MODEL CARDS 3D EFFECT
+// ============================================
+function initModelCards() {
+    const cards = document.querySelectorAll('.model-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 20;
+            const rotateY = (centerX - x) / 20;
+
+            const wrapper = card.querySelector('.card-3d-wrapper');
+            if (wrapper) {
+                wrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            }
+        });
+
+        card.addEventListener('mouseleave', () => {
+            const wrapper = card.querySelector('.card-3d-wrapper');
+            if (wrapper) {
+                wrapper.style.transform = 'rotateX(0) rotateY(0)';
+            }
+        });
+    });
+}
+
+// ============================================
+// TIMELINE INTERACTIONS
+// ============================================
+function initTimeline() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    timelineItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            timelineItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+        });
+    });
+}
+
+// ============================================
+// CONFIGURATOR
+// ============================================
+function initConfigurator() {
+    const colorBtns = document.querySelectorAll('.color-btn');
+    const interiorBtns = document.querySelectorAll('.interior-btn');
+    const wheelBtns = document.querySelectorAll('.wheel-btn');
+    const colorOverlay = document.querySelector('.color-overlay');
+    const selectedColor = document.getElementById('selected-color');
+    const selectedInterior = document.getElementById('selected-interior');
+    const totalPrice = document.getElementById('total-price');
+
+    const colorMap = {
+        'atlantic-blue': { name: 'Atlantic Blue', color: 'rgba(26, 58, 92, 0.5)', price: 0 },
+        'french-racing': { name: 'French Racing Blue', color: 'rgba(30, 58, 138, 0.5)', price: 50000 },
+        'jet-black': { name: 'Jet Black', color: 'rgba(10, 10, 10, 0.5)', price: 0 },
+        'quartz-white': { name: 'Quartz White', color: 'rgba(245, 245, 245, 0.3)', price: 75000 },
+        'italian-red': { name: 'Italian Red', color: 'rgba(139, 0, 0, 0.5)', price: 100000 },
+        'nocturne': { name: 'Nocturne', color: 'rgba(45, 27, 78, 0.5)', price: 150000 }
+    };
+
+    const interiorMap = {
+        'beluga-black': { name: 'Beluga Black', price: 0 },
+        'cognac': { name: 'Cognac', price: 25000 },
+        'gaucho': { name: 'Gaucho', price: 35000 }
+    };
+
+    let basePrice = 3500000;
+    let colorPrice = 0;
+    let interiorPrice = 0;
+
+    function updatePrice() {
+        const total = basePrice + colorPrice + interiorPrice;
+        if (totalPrice) {
+            totalPrice.textContent = '€' + total.toLocaleString();
+        }
+    }
+
+    colorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            colorBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const colorKey = btn.dataset.color;
+            const colorData = colorMap[colorKey];
+
+            if (colorOverlay && colorData) {
+                colorOverlay.style.background = colorData.color;
+            }
+            if (selectedColor && colorData) {
+                selectedColor.textContent = colorData.name;
+            }
+            colorPrice = colorData ? colorData.price : 0;
+            updatePrice();
+        });
+    });
+
+    interiorBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            interiorBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const interiorKey = btn.dataset.interior;
+            const interiorData = interiorMap[interiorKey];
+
+            if (selectedInterior && interiorData) {
+                selectedInterior.textContent = interiorData.name;
+            }
+            interiorPrice = interiorData ? interiorData.price : 0;
+            updatePrice();
+        });
+    });
+
+    wheelBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            wheelBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+}
+
+// ============================================
+// INTERACTIVE DASHBOARD
+// ============================================
+function initDashboard() {
+    const speedArc = document.querySelector('.speed-arc');
+    const digitalSpeed = document.querySelector('.digital-speed');
+    const needleGroup = document.querySelector('.needle-group');
+    const rpmArc = document.querySelector('.rpm-arc');
+    const rpmValue = document.querySelector('.rpm-value');
+    const boostArc = document.querySelector('.boost-arc');
+    const boostValue = document.querySelector('.boost-value');
+    const tempArc = document.querySelector('.temp-arc');
+    const tempValue = document.querySelector('.temp-value');
+    const gearValue = document.querySelector('.gear-value');
+
+    let currentSpeed = 0;
+    let targetSpeed = 0;
+    let currentRPM = 0;
+    let currentBoost = 0;
+    let currentGear = 0;
+    const gears = ['N', '1', '2', '3', '4', '5', '6', '7'];
+
+    // Dashboard animation on scroll into view
+    const dashboardSection = document.querySelector('.dashboard-section');
+    if (!dashboardSection) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                startDashboardAnimation();
+            }
+        });
+    }, { threshold: 0.3 });
+
+    observer.observe(dashboardSection);
+
+    function startDashboardAnimation() {
+        // Simulate acceleration sequence
+        const sequence = [
+            { speed: 0, rpm: 1, boost: 0, gear: 0, duration: 500 },
+            { speed: 60, rpm: 6, boost: 1.2, gear: 1, duration: 800 },
+            { speed: 120, rpm: 7, boost: 1.8, gear: 2, duration: 600 },
+            { speed: 180, rpm: 6.5, boost: 2.0, gear: 3, duration: 500 },
+            { speed: 240, rpm: 7, boost: 2.2, gear: 4, duration: 500 },
+            { speed: 300, rpm: 6.8, boost: 2.4, gear: 5, duration: 500 },
+            { speed: 360, rpm: 7.1, boost: 2.6, gear: 6, duration: 600 },
+            { speed: 420, rpm: 7, boost: 2.5, gear: 7, duration: 800 },
+            { speed: 440, rpm: 7.1, boost: 2.7, gear: 7, duration: 1000 }
+        ];
+
+        let totalDelay = 0;
+        sequence.forEach((step, index) => {
+            setTimeout(() => {
+                animateTo(step.speed, step.rpm, step.boost, step.gear);
+            }, totalDelay);
+            totalDelay += step.duration;
+        });
+    }
+
+    function animateTo(speed, rpm, boost, gear) {
+        // Animate speed
+        const speedProgress = speed / 440;
+        const arcLength = 377 * speedProgress;
+        if (speedArc) {
+            speedArc.style.strokeDashoffset = 377 - arcLength;
+        }
+        if (digitalSpeed) {
+            animateValue(digitalSpeed, currentSpeed, speed, 300);
+        }
+        if (needleGroup) {
+            const rotation = -90 + (speedProgress * 180);
+            needleGroup.style.transform = `rotate(${rotation}deg)`;
+        }
+        currentSpeed = speed;
+
+        // Animate RPM
+        const rpmProgress = rpm / 8;
+        if (rpmArc) {
+            rpmArc.style.strokeDashoffset = 110 - (110 * rpmProgress);
+        }
+        if (rpmValue) {
+            rpmValue.textContent = rpm.toFixed(1);
+        }
+
+        // Animate Boost
+        const boostProgress = boost / 3;
+        if (boostArc) {
+            boostArc.style.strokeDashoffset = 110 - (110 * boostProgress);
+        }
+        if (boostValue) {
+            boostValue.textContent = boost.toFixed(1);
+        }
+
+        // Update Gear
+        if (gearValue) {
+            gearValue.textContent = gears[gear];
+        }
+
+        // Temperature stays relatively stable
+        const temp = 90 + Math.random() * 10;
+        if (tempValue) {
+            tempValue.textContent = Math.round(temp);
+        }
+        if (tempArc) {
+            tempArc.style.strokeDashoffset = 110 - (110 * 0.6);
+        }
+    }
+
+    function animateValue(element, start, end, duration) {
+        const startTime = Date.now();
+        
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = Math.round(start + (end - start) * progress);
+            element.textContent = current;
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        
+        requestAnimationFrame(update);
+    }
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+// Throttle function for performance
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Smooth number animation
+function animateNumber(element, target, duration = 1000) {
+    const start = parseInt(element.textContent) || 0;
+    const startTime = Date.now();
+
+    function update() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * easeOut);
+        
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+
+    requestAnimationFrame(update);
+}
+
+// Add hover sound effect (optional - requires audio files)
+function playHoverSound() {
+    // const audio = new Audio('hover.mp3');
+    // audio.volume = 0.1;
+    // audio.play();
+}
+
+// Console branding
+console.log('%c BUGATTI ', 'background: #c9a227; color: #0a0a0a; font-size: 24px; font-weight: bold; padding: 10px 20px;');
+console.log('%c The Art of Automotive Excellence ', 'color: #888; font-size: 12px;');
